@@ -1,9 +1,13 @@
-package com.autobots.automanager.modelo;
+package com.autobots.automanager.modelo.Documento;
 
 import java.util.List;
 
-import com.autobots.automanager.entidades.Documento;
+import org.springframework.stereotype.Component;
 
+import com.autobots.automanager.entidades.Documento;
+import com.autobots.automanager.modelo.StringVerificadorNulo;
+
+@Component
 public class DocumentoAtualizador {
 	private StringVerificadorNulo verificador = new StringVerificadorNulo();
 
