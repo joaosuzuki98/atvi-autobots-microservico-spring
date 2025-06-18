@@ -1,5 +1,6 @@
-package com.autobots.automanager.modelo;
+package com.autobots.automanager.modelo.Cliente;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -16,5 +17,14 @@ public class ClienteSelecionador {
 			}
 		}
 		return selecionado;
+	}
+
+	public List<Cliente> selecionar(List<Cliente> clientes) {
+		List<Cliente> selecionados = new ArrayList<>();
+		for (Cliente cliente : clientes) {
+			selecionados.add(cliente);
+		}
+
+		return selecionados;
 	}
 }

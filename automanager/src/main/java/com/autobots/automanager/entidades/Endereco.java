@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -28,5 +31,7 @@ public class Endereco {
 	private String codigoPostal;
 	@Column(unique = false, nullable = true)
 	private String informacoesAdicionais;
-
+	@OneToOne(mappedBy = "endereco")
+	@JsonIgnore
+	private Cliente cliente;
 }

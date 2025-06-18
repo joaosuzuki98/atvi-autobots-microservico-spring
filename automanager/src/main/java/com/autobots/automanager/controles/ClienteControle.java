@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.autobots.automanager.entidades.Cliente;
-import com.autobots.automanager.modelo.ClienteAtualizador;
-import com.autobots.automanager.modelo.ClienteSelecionador;
+import com.autobots.automanager.modelo.Cliente.ClienteAtualizador;
+import com.autobots.automanager.modelo.Cliente.ClienteExcluidor;
+import com.autobots.automanager.modelo.Cliente.ClienteSelecionador;
 import com.autobots.automanager.repositorios.ClienteRepositorio;
 
 @RestController
@@ -22,37 +23,57 @@ import com.autobots.automanager.repositorios.ClienteRepositorio;
 public class ClienteControle {
 	@Autowired
 	private ClienteRepositorio repositorio;
+
 	@Autowired
 	private ClienteSelecionador selecionador;
 
-	@GetMapping("/cliente/{id}")
+	@Autowired
+	private ClienteAtualizador atualizador;
+
+	@Autowired
+	private ClienteExcluidor excluidor;
+
+	@GetMapping("/{id}")
 	public Cliente obterCliente(@PathVariable long id) {
 		List<Cliente> clientes = repositorio.findAll();
 		return selecionador.selecionar(clientes, id);
 	}
 
-	@GetMapping("/clientes")
+	@GetMapping
 	public List<Cliente> obterClientes() {
 		List<Cliente> clientes = repositorio.findAll();
-		return clientes;
+		return selecionador.selecionar(clientes);
 	}
 
-	@PostMapping("/cadastro")
-	public void cadastrarCliente(@RequestBody Cliente cliente) {
-		repositorio.save(cliente);
+	@PostMapping
+	public Cliente cadastrarCliente(@RequestBody Cliente cliente) {
+		return repositorio.save(cliente);
 	}
 
-	@PutMapping("/atualizar")
-	public void atualizarCliente(@RequestBody Cliente atualizacao) {
+	@PutMapping
+	public Cliente atualizarCliente(@RequestBody Cliente atualizacao) {
 		Cliente cliente = repositorio.getById(atualizacao.getId());
 		ClienteAtualizador atualizador = new ClienteAtualizador();
-		atualizador.atualizar(cliente, atualizacao);
-		repositorio.save(cliente);
+		atualizador.atualizarDados(cliente, atualizacao);
+		return repositorio.save(cliente);
 	}
 
-	@DeleteMapping("/excluir")
-	public void excluirCliente(@RequestBody Cliente exclusao) {
-		Cliente cliente = repositorio.getById(exclusao.getId());
-		repositorio.delete(cliente);
+	@PutMapping("/multiplos")
+	public List<Cliente> atualizarClientes(@RequestBody List<Cliente> c) {
+		List<Cliente> alvos = repositorio.findAll();
+		atualizador.atualizar(alvos, c);
+		return repositorio.saveAll(alvos);
+	}
+
+	@DeleteMapping("/{id}")
+	public String excluirCliente(@PathVariable Long id) {
+		excluidor.excluir(id);
+		return "Cliente deletado";
+	}
+
+	@DeleteMapping("/multiplos")
+	public String excluirClientes(@RequestBody List<Cliente> c) {
+		excluidor.excluir(c);
+		return "Clientes deletados";
 	}
 }
